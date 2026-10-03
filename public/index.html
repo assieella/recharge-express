@@ -338,10 +338,18 @@ textarea{min-height:5rem;resize:vertical}
    ===================================================================== */
 const CONFIG = {
   nomService: "Recharge Express",
-  // Frais : 50 FCFA pour une recharge de moins de 500 FCFA, 100 FCFA à partir de 500 FCFA
-  seuilFrais: 500,
-  fraisPetit: 50,
-  fraisNormal: 100,
+  // Grille des frais de service (frais Wave de 1 % déjà inclus)
+  // jusqu'à "max" FCFA de recharge -> "frais" FCFA
+  grilleFrais: [
+    {max: 499,   frais: 55},
+    {max: 1000,  frais: 115},
+    {max: 2000,  frais: 125},
+    {max: 5000,  frais: 155},
+    {max: 10000, frais: 205}
+  ],
+  // Au-delà de la grille : on garde 100 FCFA nets après les 1 % de Wave
+  gainNet: 100,
+  tauxWave: 0.01,
   montantMinimum: 100,
   // Numéro marchand Wave (Côte d'Ivoire uniquement)
   numeroMarchandWave: "0504775774",
@@ -409,7 +417,12 @@ const fcfa = n => n.toLocaleString("fr-FR").replace(/\u202f|\u00a0/g," ") + " FC
 const digits = s => (s||"").replace(/\D/g,"");
 const fmtPhone = d => d.replace(/(\d{2})(?=\d)/g,"$1 ").trim();
 const intl = d => "+225 " + fmtPhone(d);
-const frais = m => m < CONFIG.seuilFrais ? CONFIG.fraisPetit : CONFIG.fraisNormal;
+function frais(m){
+  const palier = CONFIG.grilleFrais.find(p => m <= p.max);
+  if(palier) return palier.frais;
+  const brut = (CONFIG.gainNet + CONFIG.tauxWave * m) / (1 - CONFIG.tauxWave);
+  return Math.ceil(brut / 5) * 5;
+}
 // Ne garde qu'un numéro ivoirien : retire +225 / 00225 s'ils sont collés, garde 10 chiffres
 function ciDigits(raw){
   let d = digits(raw);
@@ -422,7 +435,7 @@ const ciValide = d => /^(01|05|07)\d{8}$/.test(d);
 document.getElementById("brandName").textContent = CONFIG.nomService;
 document.title = CONFIG.nomService + " — rechargez sans vous déplacer";
 document.getElementById("homeFoot").innerHTML =
-  `Crédit, internet ou mix, en Côte d'Ivoire. <strong>Frais : ${fcfa(CONFIG.fraisPetit)}</strong> sous ${fcfa(CONFIG.seuilFrais)}, <strong>${fcfa(CONFIG.fraisNormal)}</strong> au-delà. Paiement par Wave.`;
+  `Crédit, internet ou mix, en Côte d'Ivoire. <strong>Frais de service dès ${fcfa(CONFIG.grilleFrais[0].frais)}</strong>. Paiement par Wave.`;
 
 function show(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active", s.id===id));
