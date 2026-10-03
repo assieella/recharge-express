@@ -163,7 +163,7 @@ textarea{min-height:5rem;resize:vertical}
 }
 .cta:disabled{opacity:.4;cursor:not-allowed}
 .cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-.cta.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.cta.ghost{background:transparent;color:var(--ink);border:2px solid var(--line);margin-top:.75rem}
 .cta.wave{background:#1DC8FF;color:#03263A}
 .cta.wa{background:#1FA855;color:#fff}
 .spacer{flex:1}
@@ -225,8 +225,8 @@ textarea{min-height:5rem;resize:vertical}
       <ol>
         <li><span>1</span>Clique sur ton opérateur</li>
         <li><span>2</span>Choisis ton forfait ou ton montant</li>
-        <li><span>3</span>Paie avec Wave</li>
-        <li><span>4</span>Envoie ta commande sur WhatsApp et reçois ta recharge</li>
+        <li><span>3</span>Envoie ta commande sur WhatsApp</li>
+        <li><span>4</span>Paie avec Wave, envoie la capture et reçois ta recharge</li>
       </ol>
     </div>
     <div class="bands" role="group" aria-label="Choisis ton opérateur">
@@ -268,7 +268,7 @@ textarea{min-height:5rem;resize:vertical}
     </div>
   </section>
 
-  <!-- Écran 3 — Récapitulatif -->
+  <!-- Écran 3 — Récapitulatif + envoi WhatsApp -->
   <section class="screen" id="s-recap" aria-label="Récapitulatif">
     <header class="topbar">
       <button class="back" data-back="s-order" aria-label="Retour">‹</button>
@@ -280,57 +280,52 @@ textarea{min-height:5rem;resize:vertical}
         <dl id="recapList"></dl>
         <div class="total"><span>Total à payer</span><strong id="recapTotal"></strong></div>
       </div>
+      <div class="field">
+        <label for="wavePhone">Numéro Wave qui va payer</label>
+        <div class="tel-group"><span class="cc">+225</span><input type="tel" id="wavePhone" inputmode="numeric" placeholder="07 00 00 00 00" maxlength="18"></div>
+        <p class="hint">Pour retrouver ton paiement.</p>
+      </div>
       <div class="spacer"></div>
-      <button class="cta wave" id="toPay">Payer avec Wave</button>
+      <p class="notice" style="margin:0"><b style="color:var(--ink)">D'abord la commande, ensuite le paiement.</b><br>Envoie ta commande sur WhatsApp. Tu paieras avec Wave juste après.</p>
+      <a class="cta wa" id="waLink" href="#" target="_blank" rel="noopener">1. Envoyer ma commande sur WhatsApp</a>
     </div>
   </section>
 
-  <!-- Écran 3b — Paiement + envoi -->
+  <!-- Écran 4 — Paiement Wave -->
   <section class="screen" id="s-pay" aria-label="Paiement">
     <header class="topbar">
       <button class="back" data-back="s-recap" aria-label="Retour">‹</button>
-      <h2>Paiement</h2>
+      <h2>Dernière étape</h2>
     </header>
     <div class="body">
+      <p style="margin:0;font-weight:800">Commande envoyée ✓ <span class="hint">Réf. <span id="doneRef"></span></span></p>
       <ol class="steps">
-        <li>
-          <span class="num">1</span>
-          <div>
-            <h3>Payez <span id="payAmount"></span> avec Wave</h3>
-            <p class="hint" style="margin:0" id="payHint"></p>
-            <div class="merchant" id="merchantBox">
-              <div><span class="hint" style="margin:0;display:block">Numéro marchand Wave</span><b id="merchantNum"></b></div>
-              <button class="copy" id="copyNum">Copier le numéro</button>
-            </div>
-            <a class="cta wave" id="waveLink" href="#" target="_blank" rel="noopener">Ouvrir Wave et payer</a>
-          </div>
-        </li>
         <li>
           <span class="num">2</span>
           <div>
-            <h3>Envoyez votre commande</h3>
-            <div class="field">
-              <label for="wavePhone">Numéro Wave utilisé pour payer</label>
-              <div class="tel-group"><span class="cc">+225</span><input type="tel" id="wavePhone" inputmode="numeric" placeholder="07 00 00 00 00" maxlength="18"></div>
-              <p class="hint">Il nous permet de retrouver votre paiement.</p>
+            <h3>Paie <span id="payAmount"></span> avec Wave</h3>
+            <p class="hint" style="margin:0">Wave s'ouvre au nom de TAPA CONSEIL. Vérifie le montant avant de valider.</p>
+            <a class="cta wave" id="waveLink" href="#" target="_blank" rel="noopener" hidden>Payer avec Wave</a>
+            <div class="merchant" id="merchantBox">
+              <div><span class="hint" style="margin:0;display:block">Numéro Wave TAPA CONSEIL</span><b id="merchantNum"></b></div>
+              <button class="copy" id="copyNum">Copier</button>
             </div>
-            <a class="cta wa" id="waLink" href="#" target="_blank" rel="noopener">Envoyer ma commande sur WhatsApp</a>
           </div>
         </li>
+        <li>
+          <span class="num">3</span>
+          <div>
+            <h3>Envoie la capture du paiement</h3>
+            <a class="cta wa" id="waBack" href="#" target="_blank" rel="noopener">Envoyer la capture sur WhatsApp</a>
+          </div>
+        </li>
+        <li>
+          <span class="num">4</span>
+          <div><h3>Reçois ta recharge</h3><p class="hint" style="margin:0">Confirmation sur WhatsApp dès que c'est fait.</p></div>
+        </li>
       </ol>
-      <p class="notice" id="demoNotice" hidden></p>
-    </div>
-  </section>
-
-  <!-- Écran 4 — Confirmation -->
-  <section class="screen" id="s-done" aria-label="Confirmation">
-    <div class="done">
-      <div class="mark" aria-hidden="true">✓</div>
-      <h2>Commande envoyée</h2>
-      <p>Votre recharge est en cours de traitement. Vous recevrez la confirmation sur WhatsApp dès qu'elle est effectuée.</p>
-      <p>Référence : <span class="ref" id="doneRef"></span></p>
-      <div style="height:1rem"></div>
-      <button class="cta" id="again">Nouvelle recharge</button>
+      <div class="spacer"></div>
+      <button class="cta ghost" id="again">Nouvelle recharge</button>
     </div>
   </section>
 
@@ -555,35 +550,25 @@ $("#toRecap").addEventListener("click",()=>{
   ].map(([k,v])=>`<div class="row"><dt>${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join("");
   $("#recapTotal").textContent = fcfa(total);
   try{ localStorage.setItem("dernierNumero_"+state.op, state.phone); }catch(e){}
+  prepareEnvoi();
   show("s-recap");
 });
 
-/* --- Paiement --- */
-$("#toPay").addEventListener("click",()=>{
-  const total = state.amount + frais(state.amount);
+/* --- Envoi WhatsApp puis paiement --- */
+function prepareEnvoi(){
   state.ref = makeRef();
-  $("#payAmount").textContent = fcfa(total);
-  $("#merchantNum").textContent = intl(CONFIG.numeroMarchandWave);
-  if(CONFIG.waveLienMarchand){
-    const sep = CONFIG.waveLienMarchand.includes("?") ? "&" : "?";
-    $("#waveLink").href = CONFIG.waveLienMarchand + sep + "amount=" + total;
-    $("#waveLink").hidden = false;
-    $("#merchantBox").hidden = true;
-    $("#payHint").textContent = `Wave s'ouvre au nom de TAPA CONSEIL. Vérifie que le montant est bien ${fcfa(total)}, paie, puis reviens ici.`;
-  } else {
-    $("#waveLink").hidden = true;
-    $("#merchantBox").hidden = false;
-    $("#payHint").textContent = `Dans votre application Wave, payez exactement ${fcfa(total)} au numéro marchand ci-dessous, puis revenez ici.`;
-  }
   if(!$("#wavePhone").value){ $("#wavePhone").value = fmtPhone(state.phone); }
   updateWa();
-  $("#demoNotice").hidden = true;
-  show("s-pay");
-});
+}
 $("#wavePhone").addEventListener("input",e=>{
   e.target.value = fmtPhone(ciDigits(e.target.value));
   updateWa();
 });
+function lienWave(total){
+  if(!CONFIG.waveLienMarchand) return `Numéro Wave : ${intl(CONFIG.numeroMarchandWave)}`;
+  const sep = CONFIG.waveLienMarchand.includes("?") ? "&" : "?";
+  return CONFIG.waveLienMarchand + sep + "amount=" + total;
+}
 function updateWa(){
   const op = OPS[state.op], f = frais(state.amount), total = state.amount + f;
   const wave = ciDigits($("#wavePhone").value);
@@ -596,24 +581,37 @@ function updateWa(){
     `Offre : ${state.label}`,
     `Recharge : ${fcfa(state.amount)}`,
     `Frais : ${fcfa(f)}`,
-    `Total payé : ${fcfa(total)}`,
-    `Payé avec Wave depuis : ${ciValide(wave) ? intl(wave) : "non précisé"}`
-  ].join("\n");
+    `Total à payer : ${fcfa(total)}`,
+    `Paiement Wave depuis : ${ciValide(wave) ? intl(wave) : "non précisé"}`,
+    "",
+    `Je paie ${fcfa(total)} par Wave (TAPA CONSEIL) avec ce lien, puis j'envoie la capture ici :`,
+    lienWave(total)
+  ].filter(l => l !== null).join("\n");
   $("#waLink").href = `https://wa.me/225${CONFIG.whatsappEquipe}?text=${encodeURIComponent(msg)}`;
+  $("#waBack").href = `https://wa.me/225${CONFIG.whatsappEquipe}?text=${encodeURIComponent(`Paiement Wave effectué pour la commande ${state.ref} (${fcfa(total)}). Voici la capture :`)}`;
 }
+$("#waLink").addEventListener("click",()=>{
+  const total = state.amount + frais(state.amount);
+  $("#doneRef").textContent = state.ref;
+  $("#payAmount").textContent = fcfa(total);
+  $("#merchantNum").textContent = intl(CONFIG.numeroMarchandWave);
+  if(CONFIG.waveLienMarchand){
+    const sep = CONFIG.waveLienMarchand.includes("?") ? "&" : "?";
+    $("#waveLink").href = CONFIG.waveLienMarchand + sep + "amount=" + total;
+    $("#waveLink").hidden = false;
+    $("#merchantBox").hidden = true;
+  }
+  setTimeout(()=>show("s-pay"), 400);
+});
 $("#copyNum").addEventListener("click",async ()=>{
   const b = $("#copyNum"), num = "+225" + CONFIG.numeroMarchandWave;
-  try{ await navigator.clipboard.writeText(num); b.textContent = "Numéro copié"; }
+  try{ await navigator.clipboard.writeText(num); b.textContent = "Copié ✓"; }
   catch(e){
     const r = document.createRange(); r.selectNodeContents($("#merchantNum"));
     const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
-    b.textContent = "Numéro sélectionné";
+    b.textContent = "Sélectionné";
   }
-  setTimeout(()=>b.textContent="Copier le numéro", 2000);
-});
-$("#waLink").addEventListener("click",()=>{
-  $("#doneRef").textContent = state.ref;
-  setTimeout(()=>show("s-done"), 400);
+  setTimeout(()=>b.textContent="Copier", 2000);
 });
 
 /* --- Confirmation --- */
